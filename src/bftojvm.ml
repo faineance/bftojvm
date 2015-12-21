@@ -4,24 +4,24 @@ let header = "
 .super java/lang/Object
 
 .method public <init>()V
-	aload_0
-	invokenonvirtual java/lang/Object/<init>()V
-	return
+    aload_0
+    invokenonvirtual java/lang/Object/<init>()V
+    return
 .end method
 
 .method public static main([Ljava/lang/String;)V
-	.limit stack 10
-	.limit locals 3
+    .limit stack 10
+    .limit locals 3
 
-	iconst_0
-	istore_1
-	bipush 127
-	newarray int
-	astore_2
+    iconst_0
+    istore_1
+    bipush 127
+    newarray int
+    astore_2
 
 "
 let footer = "
-	return
+    return
 .end method
 "
 let load = "\taload_2\n\tiload_1\n"
@@ -29,51 +29,56 @@ let load = "\taload_2\n\tiload_1\n"
 let move i = "\tiinc 1 " ^ i ^ "\n"
 
 let modify i = load ^ "\tdup2
-	iaload
-	bipush " ^ i ^ "
-	iadd
-	iastore
+    iaload
+    bipush " ^ i ^ "
+    iadd
+    iastore
 "
 let write = "
-	getstatic java/lang/System/out Ljava/io/PrintStream;
+    getstatic java/lang/System/out Ljava/io/PrintStream;
 " ^ load ^ "
-	iaload 
-	i2c
-	invokevirtual java/io/PrintStream/print(C)V
+    iaload 
+    i2c
+    invokevirtual java/io/PrintStream/print(C)V
 "
 let read = load ^ "\tgetstatic java/lang/System/in Ljava/io/InputStream;
-	invokevirtual java/io/InputStream/read()I
-	iastore
+    invokevirtual java/io/InputStream/read()I
+    iastore
 "
 
 let loop_start i = "
-	loop_" ^ i ^ "_start:
+    loop_" ^ i ^ "_start:
 " ^ load ^ "
-	iaload
-	ifeq loop_" ^ i ^ "_end
+    iaload
+    ifeq loop_" ^ i ^ "_end
 "
 let loop_end i = "
-	goto loop_" ^ i ^ "_start
-	loop_" ^ i ^ "_end:
+    goto loop_" ^ i ^ "_start
+    loop_" ^ i ^ "_end:
 "
 
 
 type op = 
-		| Move of int
-		| Modify of int
-		| Read
-		| Write
-		| LoopStart (* TODO Loop of op list *)
-		| LoopEnd 
+        | Move of int
+        | Modify of int
+        | Read
+        | Write
+        | LoopStart (* TODO Loop of op list *)
+        | LoopEnd 
 
 let rec optimize ops  = 
-	match ops with 
-	| Move (x) :: Move (y) :: tail -> 
-								optimize (Move (x + y) :: tail)
-	| Modify (x) :: Modify (y) :: tail -> 
-								optimize (Modify (x + y) :: tail)
-	| head :: tail -> head :: (optimize tail)
-	| [] -> []
+    match ops with 
+    | Move (x) :: Move (y) :: tail -> 
+                                optimize (Move (x + y) :: tail)
+    | Modify (x) :: Modify (y) :: tail -> 
+                                optimize (Modify (x + y) :: tail)
+    | head :: tail -> head :: (optimize tail)
+    | [] -> []
+
+
+
+
+
 
 let gen ops =
     let loop = ref 0 in
@@ -101,12 +106,12 @@ let parse str =
         | ']' -> Some( LoopEnd )
         | _ -> None
     in
-	let chars = Array.to_list(Array.init (String.length str) (String.get str)) in
-	List.fold_left
-    	(fun l x -> match match_op x with
-    			| None -> l
-    			| Some y -> y :: l)
-    		[] chars
+    let chars = Array.to_list(Array.init (String.length str) (String.get str)) in
+    List.fold_left
+        (fun l x -> match match_op x with
+                | None -> l
+                | Some y -> y :: l)
+            [] chars
 
 let () =
-	Printf.printf "%s%s%s" header (gen (optimize (parse (input_line stdin)))) footer
+    Printf.printf "%s%s%s" header (gen (optimize (parse (input_line stdin)))) footer
