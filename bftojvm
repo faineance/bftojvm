@@ -1,0 +1,5 @@
+#!/bin/sh
+FILENAME=$(basename $1 .bf)
+./bftojvm.byte < $1 > $FILENAME.j
+jasmin $FILENAME.j
+java -cp . BF

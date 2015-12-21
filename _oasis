@@ -1,0 +1,14 @@
+OASISFormat: 0.4
+Name:        bftojvm
+Version:     
+Synopsis:    BF to JVM
+Authors:     
+License:     MIT
+Plugins: META (0.4), DevFiles (0.4)
+
+
+Executable bftojvm
+  Path:       src
+  BuildTools: ocamlbuild
+  MainIs:     bftojvm.ml
+  
