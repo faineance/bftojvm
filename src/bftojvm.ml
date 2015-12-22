@@ -13,9 +13,10 @@ let header = "
     .limit stack 10
     .limit locals 3
 
-    iconst_0
+    ldc 15000
     istore_1
-    bipush 127
+
+    ldc 30000
     newarray int
     astore_2
 
@@ -33,17 +34,19 @@ let modify i = load ^ "\tdup2
     bipush " ^ i ^ "
     iadd
     iastore
+
 "
 let write = "
     getstatic java/lang/System/out Ljava/io/PrintStream;
-" ^ load ^ "
-    iaload 
+" ^ load ^ "\tiaload 
     i2c
     invokevirtual java/io/PrintStream/print(C)V
+
 "
 let read = load ^ "\tgetstatic java/lang/System/in Ljava/io/InputStream;
     invokevirtual java/io/InputStream/read()I
     iastore
+
 "
 
 let loop_start i = "
@@ -51,10 +54,12 @@ let loop_start i = "
 " ^ load ^ "
     iaload
     ifeq loop_" ^ i ^ "_end
+
 "
 let loop_end i = "
     goto loop_" ^ i ^ "_start
     loop_" ^ i ^ "_end:
+
 "
 
 
@@ -106,7 +111,7 @@ let parse str =
         | ']' -> Some( LoopEnd )
         | _ -> None
     in
-    let chars = Array.to_list(Array.init (String.length str) (String.get str)) in
+    let chars = List.rev (Array.to_list(Array.init (String.length str) (String.get str))) in
     List.fold_left
         (fun l x -> match match_op x with
                 | None -> l
