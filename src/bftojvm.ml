@@ -1,4 +1,3 @@
-open Printf
 let header = "
 .class public BF
 .super java/lang/Object
@@ -73,12 +72,12 @@ type op =
 
 let rec optimize ops  = 
     match ops with 
-    | Move (x) :: Move (y) :: tail -> 
-                                optimize (Move (x + y) :: tail)
-    | Modify (x) :: Modify (y) :: tail -> 
-                                optimize (Modify (x + y) :: tail)
-    | head :: tail -> head :: (optimize tail)
-    | [] -> []
+        | Move (x) :: Move (y) :: tail -> 
+                                    optimize (Move (x + y) :: tail)
+        | Modify (x) :: Modify (y) :: tail -> 
+                                    optimize (Modify (x + y) :: tail)
+        | head :: tail -> head :: (optimize tail)
+        | [] -> []
 
 
 
@@ -101,15 +100,15 @@ let gen ops =
 let parse str =
     let match_op ch = 
         match ch with
-        | '>' -> Some( Move(1) )
-        | '<' -> Some( Move(-1) )
-        | '+' -> Some( Modify(1) )
-        | '-' -> Some( Modify(-1) )
-        | ',' -> Some( Read )
-        | '.' -> Some( Write )
-        | '[' -> Some( LoopStart )
-        | ']' -> Some( LoopEnd )
-        | _ -> None
+            | '>' -> Some( Move(1) )
+            | '<' -> Some( Move(-1) )
+            | '+' -> Some( Modify(1) )
+            | '-' -> Some( Modify(-1) )
+            | ',' -> Some( Read )
+            | '.' -> Some( Write )
+            | '[' -> Some( LoopStart )
+            | ']' -> Some( LoopEnd )
+            | _ -> None
     in
     let chars = List.rev (Array.to_list(Array.init (String.length str) (String.get str))) in
     List.fold_left
